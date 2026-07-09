@@ -43,7 +43,6 @@ public class InboundScannerService {
 
         long minAgeMs = cspConfiguration.scanner().minimumFileAgeMs();
         Instant cutOff = Instant.now().minus(Duration.ofMillis(minAgeMs));
-        System.out.println("Cutoff : "+cutOff.toString());
 
         try(DirectoryStream<Path> files = Files.newDirectoryStream(inboundScanPath)) {
             for(Path file : files) {
@@ -56,9 +55,8 @@ public class InboundScannerService {
                 //check if the file has been already been processed.
                 if(this.processedFiles.contains(file)) continue;
 
-                BasicFileAttributes fileAttriburtes = Files.readAttributes(file, BasicFileAttributes.class);
-                System.out.println("Lastmodified time of file : "+fileAttriburtes.lastModifiedTime().toInstant().toString());
-                if(fileAttriburtes.lastModifiedTime().toInstant().isAfter(cutOff)) continue;
+                BasicFileAttributes fileAttributes = Files.readAttributes(file, BasicFileAttributes.class);
+                if(fileAttributes.lastModifiedTime().toInstant().isAfter(cutOff)) continue;
 
                 // its a new file add it in Set
                 this.processedFiles.add(file);
@@ -74,6 +72,16 @@ public class InboundScannerService {
     private boolean performBasicFileChecks(Path file) {
         String fileName = file.getFileName().toString();
         Path absolutePath = file.toAbsolutePath();
+
+        if(!Files.exists(absolutePath)) {
+            LOG.warn("File {} does not exist", absolutePath);
+            return false;
+        }
+
+        if(!Files.isReadable(absolutePath)) {
+            LOG.warn("File {} is not readable", absolutePath);
+            return false;
+        }
 
         if (!Files.isRegularFile(file)) {
             LOG.error("File {} is not a regular file", absolutePath);
