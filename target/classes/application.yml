@@ -1,0 +1,14 @@
+spring:
+  application:
+  name: csp-dataflow-service
+csp:
+  file-base-path: ${CSP_FILE_BASE_PATH:/Users/asthethi/Downloads/documents/csp}
+  inbound-folder: ${CSP_INBOUND_FOLDER:/inbound}
+  outbound-folder: ${CSP_OUTBOUND_FOLDER:/outbound}
+  archive-folder: ${CSP_ARCHIVE_FOLDER:/archive}
+  backup-zip-folder: /backup/zipin
+  scanner:
+    fixed-delay-ms: 10000
+    minimum-file-age-ms: 10000
+    include-hidden: false
+    file-filter: ".*"

@@ -2,6 +2,9 @@ package com.mastercard.csp.dataflow.cspdataflowservice.fileintakemodule;
 
 
 import com.mastercard.csp.dataflow.cspdataflowservice.config.CspConfiguration;
+import com.mastercard.csp.dataflow.cspdataflowservice.model.FlowFileAttribute;
+import com.mastercard.csp.dataflow.cspdataflowservice.ziparchiveservice.ZipArchiveService;
+import com.mastercard.csp.dataflow.cspdataflowservice.ziparchiveservice.ZipChecksumService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -23,10 +26,12 @@ public class InboundScannerService {
     private static final Logger LOG = LoggerFactory.getLogger(InboundScannerService.class);
 
     private final CspConfiguration cspConfiguration;
+    private final ZipChecksumService nextProcess;
     private final Set<Path> processedFiles = new HashSet<>();
 
-    public InboundScannerService(CspConfiguration cspConfiguration) {
+    public InboundScannerService(CspConfiguration cspConfiguration, ZipChecksumService nextProcess) {
         this.cspConfiguration = cspConfiguration;
+        this.nextProcess = nextProcess;
     }
 
     @Scheduled(fixedDelayString = "${csp.scanner.fixed-delay-ms}")
@@ -49,6 +54,7 @@ public class InboundScannerService {
                 LOG.info("Processing file: {}", file.toAbsolutePath());
 
                 if(!this.performBasicFileChecks(file)) {
+                    processedFiles.remove(file);
                     continue;
                 }
 
@@ -60,8 +66,11 @@ public class InboundScannerService {
 
                 // its a new file add it in Set
                 this.processedFiles.add(file);
-                LOG.info("File {} processed, now deleting the file .... ", file.toAbsolutePath());
-                Files.delete(file);
+
+                // call next process to create a new parent zip file entry in database
+                nextProcess.process(getFlowFileAttributes(file, fileAttributes.size()));
+
+
             }
         } catch (IOException e) {
             LOG.warn("Error processing files", e);
@@ -99,6 +108,10 @@ public class InboundScannerService {
         }
 
         return true;
+    }
+
+    private FlowFileAttribute getFlowFileAttributes(Path path, long size) {
+       return new FlowFileAttribute(path, size);
     }
 
 }
