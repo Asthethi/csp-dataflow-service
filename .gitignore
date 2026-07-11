@@ -1,11 +1,23 @@
 # Compiled class file
 *.class
 
+# Maven build output
+target/
+
 # Log file
 *.log
 
+# OS/editor metadata
+.DS_Store
+
 # BlueJ files
 *.ctxt
+
+# IntelliJ IDEA
+.idea/
+*.iws
+*.iml
+*.ipr
 
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
