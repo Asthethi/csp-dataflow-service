@@ -3,7 +3,6 @@ package com.mastercard.csp.dataflow.cspdataflowservice.fileintakemodule;
 
 import com.mastercard.csp.dataflow.cspdataflowservice.config.CspConfiguration;
 import com.mastercard.csp.dataflow.cspdataflowservice.model.FlowFileAttribute;
-import com.mastercard.csp.dataflow.cspdataflowservice.ziparchiveservice.ZipArchiveService;
 import com.mastercard.csp.dataflow.cspdataflowservice.ziparchiveservice.ZipChecksumService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,8 +16,7 @@ import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Service
 public class InboundScannerService {
@@ -111,7 +109,10 @@ public class InboundScannerService {
     }
 
     private FlowFileAttribute getFlowFileAttributes(Path path, long size) {
-       return new FlowFileAttribute(path, size);
+       FlowFileAttribute flowFileAttribute = new FlowFileAttribute(path, size);
+       flowFileAttribute.getAttributes().put("file.id", UUID.randomUUID().toString());
+       flowFileAttribute.getAttributes().put("parent.id", "");
+        return flowFileAttribute;
     }
 
 }

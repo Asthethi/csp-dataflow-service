@@ -2,12 +2,14 @@ package com.mastercard.csp.dataflow.cspdataflowservice.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 
 @Getter
 @Setter
+@ToString
 public class FlowFileAttribute {
     private Path path;
     private long size;

@@ -21,9 +21,9 @@ public class ZipChecksumService {
     private static final String CHECKSUM_ALGORITHM = "SHA-256";
     private static final int BUFFER_SIZE = 8192;
 
-    private ZipArchiveService nextProcess;
+    private ZipMetadata nextProcess;
 
-    public ZipChecksumService(ZipArchiveService nextProcess) {
+    public ZipChecksumService(ZipMetadata nextProcess) {
         this.nextProcess = nextProcess;
     }
 
@@ -35,9 +35,8 @@ public class ZipChecksumService {
             flowFileAttribute.getAttributes().put("checksum", checksum);
             //flowFileAttribute.getAttributes().put("checksumAlgorithm", CHECKSUM_ALGORITHM); // NOT NEEDED AS AN ATTRIBUTE AT THE MOMENT
 
+            LOG.info("ZipChecksumService : Calculated {} checksum for file {}", CHECKSUM_ALGORITHM, filePath.toAbsolutePath());
             this.nextProcess.process(flowFileAttribute);
-
-            LOG.info("Calculated {} checksum for file {}", CHECKSUM_ALGORITHM, filePath.toAbsolutePath());
         } catch (IOException e) {
             LOG.warn("Unable to calculate checksum for file {}", filePath.toAbsolutePath(), e);
         }
