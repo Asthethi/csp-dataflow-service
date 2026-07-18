@@ -22,8 +22,8 @@ csp:
   outbound-folder: ${CSP_OUTBOUND_FOLDER:/outbound}
   archive-folder: ${CSP_ARCHIVE_FOLDER:/archive}
   backup-zip-folder: /backup/zipin
+  zip-file-filter: '^MCI\.AR\.R[A-Z0-9]{3}\.M\.E[A-Z0-9]+\.D\d{6}\.T\d{6}(\.[XY]\d{3})?$'
   scanner:
     fixed-delay-ms: 10000
     minimum-file-age-ms: 10000
     include-hidden: false
-    file-filter: ".*"
