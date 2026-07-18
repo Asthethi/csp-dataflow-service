@@ -9,8 +9,9 @@ public record CspConfiguration(
         String outboundFolder,
         String archiveFolder,
         String backupZipFolder,
+        String zipFileFilter,
         Scanner scanner
 ) {
 
-    public record Scanner(long fixedDelayMs, long minimumFileAgeMs, boolean includeHidden, String fileFilter){}
+    public record Scanner(long fixedDelayMs, long minimumFileAgeMs, boolean includeHidden){}
 }

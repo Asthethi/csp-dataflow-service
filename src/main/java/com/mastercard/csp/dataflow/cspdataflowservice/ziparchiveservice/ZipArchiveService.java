@@ -2,6 +2,7 @@ package com.mastercard.csp.dataflow.cspdataflowservice.ziparchiveservice;
 
 import com.mastercard.csp.dataflow.cspdataflowservice.config.CspConfiguration;
 import com.mastercard.csp.dataflow.cspdataflowservice.model.FlowFileAttribute;
+import com.mastercard.csp.dataflow.cspdataflowservice.zipvalidationservice.ZipValidationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -18,8 +19,11 @@ public class ZipArchiveService {
 
     private final CspConfiguration cspConfiguration;
 
-    public ZipArchiveService(CspConfiguration cspConfiguration) {
+    private final ZipValidationService next;
+
+    public ZipArchiveService(CspConfiguration cspConfiguration, ZipValidationService zipValidationService) {
         this.cspConfiguration = cspConfiguration;
+        this.next = zipValidationService;
     }
 
     public void process(FlowFileAttribute flowFileAttribute) {
@@ -39,6 +43,8 @@ public class ZipArchiveService {
             Files.move(source, destination, StandardCopyOption.REPLACE_EXISTING);
 
             LOG.info("Successfully archived {}", source.getFileName());
+
+            this.next.process(flowFileAttribute);
 
         } catch (Exception ex) {
             LOG.error("Failed to archive file {}", flowFileAttribute.getPath(), ex);
