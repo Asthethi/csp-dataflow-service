@@ -1,14 +1,29 @@
 spring:
   application:
   name: csp-dataflow-service
+
+  flyway:
+    baseline-on-migrate: true
+    baseline-version: 1
+
+  datasource:
+    url: ${CSP_REPORTING_DB_CONNECTION_URL:jdbc:postgresql://localhost:5432/file_ingestion}
+    username: ${DB_USER:nifi}
+    password: ${DB_PASSWORD:change_me}
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 500
+      validation-timeout: 5000
+      connection-test-query: SELECT 1
 csp:
   file-base-path: ${CSP_FILE_BASE_PATH:/Users/asthethi/Downloads/documents/csp}
   inbound-folder: ${CSP_INBOUND_FOLDER:/inbound}
   outbound-folder: ${CSP_OUTBOUND_FOLDER:/outbound}
   archive-folder: ${CSP_ARCHIVE_FOLDER:/archive}
   backup-zip-folder: /backup/zipin
+  zip-file-filter: '^MCI\.AR\.R[A-Z0-9]{3}\.M\.E[A-Z0-9]+\.D\d{6}\.T\d{6}(\.[XY]\d{3})?$'
   scanner:
     fixed-delay-ms: 10000
     minimum-file-age-ms: 10000
     include-hidden: false
-    file-filter: ".*"

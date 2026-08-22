@@ -26,12 +26,16 @@ public class ZipValidationService {
         }
 
 
+        // update file_metadata table , update the status of the file to PROCESSING
+
         if (!zipFileNameValidator.validateFile(flowFileAttribute)) {
             LOG.warn("Rejecting inbound file {} because filename does not support the allowed file pattern",
                     flowFileAttribute.getPath().toAbsolutePath());
+            // update file_metadata table , update the status of the file to FAILED
             return;
         }
 
         LOG.info("Validated inbound file {}", flowFileAttribute.getPath().toAbsolutePath());
+
     }
 }
